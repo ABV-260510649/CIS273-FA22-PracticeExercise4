@@ -74,42 +74,117 @@ namespace PracticeExercise4
         // O(n) - worst case
         public bool ContainsKey(K key)
         {
-            throw new NotImplementedException();
+            foreach (var bucket in buckets)
+            {
+                if (bucket.State == BucketState.Full)
+                {
+                    if (bucket.Key.Equals(key))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         // O(n) - average case
         // O(n) - worst case
         public bool ContainsValue(V value)
         {
-            throw new NotImplementedException();
+            foreach (var bucket in buckets)
+            {
+                if (bucket.State == BucketState.Full)
+                {
+                    if (bucket.Value.Equals(value))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         // O(1) - average case
         // O(n) - worst case
         public V Get(K key)
         {
-            throw new NotImplementedException();
+
+            // find the hash
+            int hash = Hash(key);
+
+            // find the starting index
+            int startingIndex = hash % buckets.Length;
+            int bucketIndex = startingIndex;
+
+            while (buckets[bucketIndex].State == BucketState.Full)
+            {
+                if (buckets[bucketIndex].Key.Equals(key))
+                {
+                    return buckets[bucketIndex].Value;
+                }
+
+
+                bucketIndex = (bucketIndex + 1) % buckets.Length;
+
+                if (bucketIndex == startingIndex)
+                {
+                    throw new OutOfMemoryException();
+                }
+            }
+
+            return default(V);
+
         }
 
         // O(n) - average case
         // O(n) - worst case
         public List<K> GetKeys()
         {
-            throw new NotImplementedException();
+            var keyList = new List<K>();
+
+            foreach (var bucket in buckets)
+            {
+                if (bucket.State == BucketState.Full)
+                {
+                    keyList.Add(bucket.Key);
+                }
+            }
+            return keyList;
         }
 
         // O(n) - average case
         // O(n) - worst case
         public List<V> GetValues()
         {
-            throw new NotImplementedException();
+            var valueList = new List<V>();
+
+            foreach (var bucket in buckets)
+            {
+                if (bucket.State == BucketState.Full)
+                {
+                    valueList.Add(bucket.Value);
+                }
+            }
+            return valueList;
         }
 
         // O(1) - average case
         // O(n) - worst case
         public bool Remove(K key)
         {
-            throw new NotImplementedException();
+            int hash = Hash(key);
+
+            // find the starting index
+            int Index = hash % buckets.Length;
+
+            if (ContainsKey(key))
+            {
+                buckets[Index].Clear();
+                count--;
+                return true;
+            }
+
+            return false;
         }
 
         private void Resize()
