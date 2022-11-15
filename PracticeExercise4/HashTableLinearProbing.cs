@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 
 namespace PracticeExercise4
 {
@@ -74,22 +75,37 @@ namespace PracticeExercise4
         // O(n) - worst case
         public bool ContainsKey(K key)
         {
-            foreach (var bucket in buckets)
+            // find the hash
+            int hash = Hash(key);
+
+            // find the starting index
+            int startingIndex = hash % buckets.Length;
+            int bucketIndex = startingIndex;
+            while (buckets[bucketIndex].State != BucketState.EmptySinceStart)
             {
-                if (bucket.State == BucketState.Full)
+                if (buckets[bucketIndex].State == BucketState.Full)
                 {
-                    if (bucket.Key.Equals(key))
+                    if (buckets[bucketIndex].Key.Equals(key))
                     {
                         return true;
                     }
+                    
+                }
+                bucketIndex = (bucketIndex + 1) % buckets.Length;
+                if (bucketIndex == startingIndex)
+                {
+                    return false;
                 }
             }
-            return false;
+            return false; 
+
         }
 
-        // O(n) - average case
-        // O(n) - worst case
-        public bool ContainsValue(V value)
+
+
+// O(n) - average case
+// O(n) - worst case
+public bool ContainsValue(V value)
         {
             foreach (var bucket in buckets)
             {
